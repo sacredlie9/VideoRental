@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace VideoRental
+namespace VideoRental.Forms
 {
-    public partial class Form1 : Form
+    public partial class FormMajor : Form
     {
-        public Form1()
+        public FormMajor()
         {
             InitializeComponent();
         }
