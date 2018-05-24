@@ -1,0 +1,10 @@
+D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.csprojResolveAssemblyReference.cache
+D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.Forms.FormMajor.resources
+D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.Properties.Resources.resources
+D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.csproj.GenerateResource.Cache
+D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.csproj.CoreCompileInputs.cache
+D:\VideoRental\VideoRental\VideoRental\VideoRental\bin\Debug\VideoRental.exe.config
+D:\VideoRental\VideoRental\VideoRental\VideoRental\bin\Debug\VideoRental.exe
+D:\VideoRental\VideoRental\VideoRental\VideoRental\bin\Debug\VideoRental.pdb
+D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.exe
+D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.pdb
