@@ -23,13 +23,14 @@ namespace VideoRental.Forms
 
         public FormFilms() : this(false) { }
 
-        public FormFilms(bool editMode)
+        public FormFilms(bool isAdmin)
         {
             InitializeComponent();
 
-            this.isAdmin = editMode;
+            this.isAdmin = isAdmin;
             this.Connection = new OleDbConnection(String.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0}VideoRental.accdb", AppDomain.CurrentDomain.BaseDirectory));
         }
+
 
         private void FormFilms_Load(object sender, EventArgs e)
         {
@@ -53,6 +54,10 @@ namespace VideoRental.Forms
             InstallHintFilms();
             InstallHintProducers();
             InstallHintCartridges();
+
+            dataGridViewFilms.Columns[0].Visible = false;
+            dataGridViewProducers.Columns[0].Visible = false;
+            dataGridViewCartridges.Columns[0].Visible = false;
         }
 
         private void FormFilms_FormClosing(object sender, FormClosingEventArgs e)
@@ -67,6 +72,7 @@ namespace VideoRental.Forms
                 this.Close();
         }
 
+
         private void InstallDataGridValues(bool[] updates)
         {
             if (updates[0] || updates[1] || updates[2])
@@ -78,24 +84,25 @@ namespace VideoRental.Forms
                     if (this.Connection.State == ConnectionState.Closed)
                         this.Connection.Open();
 
-                    //if (updates[0])
-                    //    this.Films = OledbTools.GetFilmsValue(command);
-                    //if (updates[1])
-                    //    this.Producers = OledbTools.GetProducerValues(command);
-                    //if (updates[2])
-                    //    this.Cartridges = OledbTools.GetCartridgeValues(command);
-
-                    FindFilm();
-                    FindProducer();
-                    FindCartridge();
-
-                    dataGridViewFilms.Columns[0].Visible = false;
-                    dataGridViewProducers.Columns[0].Visible = false;
-                    dataGridViewCartridges.Columns[0].Visible = false;
+                    if (updates[0])
+                    {
+                        command.CommandText = SqlCommands.CommandForValueFilms;
+                        this.Films = OledbTools.CreateTableForValueFilms().FillTable(command);
+                    }
+                    if (updates[1])
+                    {
+                        command.CommandText = SqlCommands.CommandForValueProducers;
+                        this.Producers = OledbTools.CreateTableForProducers().FillTable(command);
+                    }
+                    if (updates[2])
+                    {
+                        command.CommandText = SqlCommands.CommandForValueCartridges;
+                        this.Cartridges = OledbTools.CreateTableForCartridges().FillTable(command);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, "Название", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Close();
                 }
                 finally
@@ -104,6 +111,108 @@ namespace VideoRental.Forms
                 }
             }
         }
+
+        private IDictionary<string, string> GetFilmSearcher()
+        {
+            Dictionary<string, string> searcher = new Dictionary<string, string>();
+
+            if (!textBoxFilmTitle.IsEmpty("Название"))
+                searcher.Add("Title", textBoxFilmTitle.Text);
+            if (!textBoxFilmProducer.IsEmpty("Режиссер"))
+                searcher.Add("Producer", textBoxFilmProducer.Text);
+            if (!textBoxFilmGenre.IsEmpty("Жанр"))
+                searcher.Add("Genre", textBoxFilmGenre.Text);
+            if (!textBoxFilmYear.IsEmpty("Год премьеры"))
+                searcher.Add("Premiere", textBoxFilmYear.Text);
+
+            return searcher;
+        }
+
+        private IDictionary<string, string> GetProducerSearcher()
+        {
+            Dictionary<string, string> searcher = new Dictionary<string, string>();
+
+            if (!textBoxProducerName.IsEmpty("Режиссер"))
+                searcher.Add("Producer", textBoxProducerName.Text);
+            if (!textBoxProducerBirthday.IsEmpty("Дата рождения"))
+                searcher.Add("Birthday", textBoxProducerBirthday.Text);
+            if (!textBoxProducerCountry.IsEmpty("Страна"))
+                searcher.Add("Country", textBoxProducerCountry.Text);
+
+            return searcher;
+        }
+
+
+        private void InstallFilms(IDictionary<string, string> searcher)
+        {
+            bool change = false;
+            DataTable dataTableResult = this.Films;
+
+            foreach (var item in searcher)
+            {
+                change = true;
+                dataTableResult = dataTableResult.GetSearchFilms(item.Value, item.Key);
+            }
+
+            if (change)
+                buttonFilmClear.Visible = true;
+            else
+                buttonFilmClear.Visible = false;
+
+            dataGridViewFilms.DataSource = dataTableResult;
+        }
+
+        private void InstallProducers(IDictionary<string, string> searcher)
+        {
+            bool change = false;
+            DataTable dataTableResult = this.Producers;
+
+            foreach (var item in searcher)
+            {
+                change = true;
+                dataTableResult = dataTableResult.GetSearchProducers(item.Value, item.Key);
+            }
+
+            if (change)
+                buttonProducerClear.Visible = true;
+            else
+                buttonProducerClear.Visible = false;
+
+            dataGridViewProducers.DataSource = dataTableResult;
+        }
+
+        private void InstallCartridges()
+        {
+            bool change = false;
+            bool emptyPriceFrom = textBoxCartridgePriceFrom.IsEmpty("Стоимость от");
+            bool emptyPriceBefore = textBoxCartridgePriceBefore.IsEmpty("Стоимость до");
+
+            DataTable dataTableResult = this.Cartridges;
+
+            if (!textBoxСartridgeFilm.IsEmpty("Фильм"))
+            {
+                change = true;
+                dataTableResult = dataTableResult.GetSearchCartridges(textBoxСartridgeFilm.Text);
+            }
+            if (!emptyPriceFrom || !emptyPriceBefore)
+            {
+                change = true;
+
+                if (!emptyPriceFrom && !emptyPriceBefore)
+                    dataTableResult = dataTableResult.GetSearchCartridges(Decimal.Parse(textBoxCartridgePriceFrom.Text), Decimal.Parse(textBoxCartridgePriceBefore.Text));
+                else if (!emptyPriceFrom)
+                    dataTableResult = dataTableResult.GetSearchCartridges(Decimal.Parse(textBoxCartridgePriceFrom.Text));
+                else
+                    dataTableResult = dataTableResult.GetSearchCartridges(new decimal(0), Decimal.Parse(textBoxCartridgePriceBefore.Text));
+            }
+            if (change)
+                buttonCartridgeClear.Visible = true;
+            else
+                buttonCartridgeClear.Visible = false;
+
+            dataGridViewCartridges.DataSource = dataTableResult;
+        }
+
 
         private void textBoxFilmFind_Enter(object sender, EventArgs e)
         {
@@ -145,7 +254,9 @@ namespace VideoRental.Forms
 
         private void textBoxFilmFind_TextChanged(object sender, EventArgs e)
         {
-            FindFilm();
+            TextBox column = (TextBox)sender;
+        
+            InstallFilms(GetFilmSearcher());
         }
 
         private void textBoxFilmFind_KeyPress(object sender, KeyPressEventArgs e)
@@ -169,43 +280,6 @@ namespace VideoRental.Forms
             }
         }
 
-        private void FindFilm()
-        {
-            bool change = false;
-            DataTable dataTableResult = this.Films;
-
-            if (!textBoxFilmTitle.IsEmpty("Название"))
-            {
-                change = true;
-                //dataTableResult = OledbTools.GetTheSearchFilms(dataTableResult, textBoxFilmTitle.Text, "Название");
-            }
-            if (!textBoxFilmProducer.IsEmpty("Режиссер"))
-            {
-                change = true;
-                //dataTableResult = OledbTools.GetTheSearchFilms(dataTableResult, textBoxFilmProducer.Text, "Режиссер");
-            }
-            if (!textBoxFilmGenre.IsEmpty("Жанр"))
-            {
-                change = true;
-                //dataTableResult = OledbTools.GetTheSearchFilms(dataTableResult, textBoxFilmGenre.Text, "Жанр");
-            }
-            if (!textBoxFilmYear.IsEmpty("Год премьеры"))
-            {
-                change = true;
-                //dataTableResult = OledbTools.GetTheSearchFilms(dataTableResult, textBoxFilmYear.Text, "Год премьеры");
-            }
-
-            if (change)
-            {
-                dataGridViewFilms.DataSource = dataTableResult;
-                buttonFilmClear.Visible = true;
-            }
-            else
-            {
-                dataGridViewFilms.DataSource = this.Films;
-                buttonFilmClear.Visible = false;
-            }
-        }
 
         private void textBoxProducerFind_Enter(object sender, EventArgs e)
         {
@@ -244,7 +318,7 @@ namespace VideoRental.Forms
 
         private void textBoxProducerFind_TextChanged(object sender, EventArgs e)
         {
-            FindProducer();
+            InstallProducers(GetProducerSearcher());
         }
 
         private void textBoxProducerFind_KeyPress(object sender, KeyPressEventArgs e)
@@ -265,39 +339,6 @@ namespace VideoRental.Forms
             }
         }
 
-        private void FindProducer()
-        {
-            bool change = false;
-            DataTable dataTableResult = this.Producers;
-
-            if (!textBoxProducerName.IsEmpty("Режиссер"))
-            {
-                change = true;
-                //dataTableResult = OledbTools.GetTheSearchProducers(dataTableResult, textBoxProducerName.Text, "Режиссер");
-            }
-            if (!textBoxProducerBirthday.IsEmpty("Дата рождения"))
-            {
-                change = true;
-                //dataTableResult = OledbTools.GetTheSearchProducers(dataTableResult, textBoxProducerBirthday.Text, "Дата рождения");
-            }
-            if (!textBoxProducerCountry.IsEmpty("Страна"))
-            {
-                change = true;
-                //dataTableResult = OledbTools.GetTheSearchProducers(dataTableResult, textBoxProducerCountry.Text, "Страна");
-            }
-
-
-            if (change)
-            {
-                dataGridViewProducers.DataSource = dataTableResult;
-                buttonProducerClear.Visible = true;
-            }
-            else
-            {
-                dataGridViewProducers.DataSource = this.Producers;
-                buttonProducerClear.Visible = false;
-            }
-        }
 
         private void textBoxCartridgeFind_Enter(object sender, EventArgs e)
         {
@@ -336,7 +377,7 @@ namespace VideoRental.Forms
 
         private void textBoxСartridgeFind_TextChanged(object sender, EventArgs e)
         {
-            FindCartridge();
+            InstallCartridges();
         }
 
         private void textBoxСartridgeFind_KeyPress(object sender, KeyPressEventArgs e)
@@ -357,38 +398,6 @@ namespace VideoRental.Forms
             }
         }
 
-        private void FindCartridge()
-        {
-            bool change = false;
-            DataTable dataTableResult = this.Cartridges;
-
-            if (!textBoxСartridgeFilm.IsEmpty("Фильм"))
-            {
-                change = true;
-                //dataTableResult = OledbTools.GetTheSearchCartridges(dataTableResult, textBoxСartridgeFilm.Text);
-            }
-            if (!textBoxCartridgePriceFrom.IsEmpty("Стоимость от") || !textBoxCartridgePriceBefore.IsEmpty("Стоимость до"))
-            {
-                change = true;
-
-                //if (!textBoxCartridgePriceFrom.IsEmpty("Стоимость от") && !textBoxCartridgePriceBefore.IsEmpty("Стоимость до"))
-                //    dataTableResult = OledbTools.GetTheSearchCartridges(dataTableResult, Decimal.Parse(textBoxCartridgePriceFrom.Text), Decimal.Parse(textBoxCartridgePriceBefore.Text));
-                //else if (!textBoxCartridgePriceFrom.IsEmpty("Стоимость от"))
-                //    dataTableResult = OledbTools.GetTheSearchCartridges(dataTableResult, Decimal.Parse(textBoxCartridgePriceFrom.Text), new decimal(999999));
-                //else
-                //    dataTableResult = OledbTools.GetTheSearchCartridges(dataTableResult, new decimal(0), Decimal.Parse(textBoxCartridgePriceBefore.Text));
-            }
-            if (change)
-            {
-                dataGridViewCartridges.DataSource = dataTableResult;
-                buttonCartridgeClear.Visible = true;
-            }
-            else
-            {
-                dataGridViewCartridges.DataSource = this.Cartridges;
-                buttonCartridgeClear.Visible = false;
-            }
-        }
 
         private void buttonFilmClear_Click(object sender, EventArgs e)
         {
@@ -407,6 +416,7 @@ namespace VideoRental.Forms
             InstallHintCartridges();
             dataGridViewCartridges.DataSource = this.Cartridges;
         }
+
 
         private void InstallHintFilms()
         {
@@ -429,6 +439,7 @@ namespace VideoRental.Forms
             textBoxCartridgePriceFrom.InstallHint("Стоимость от");
             textBoxCartridgePriceBefore.InstallHint("Стоимость до");
         }
+
 
         private void buttonBack_Click(object sender, EventArgs e)
         {
