@@ -28,7 +28,7 @@ namespace VideoRental.Forms
             InitializeComponent();
 
             this.isAdmin = editMode;
-            //this.Connection = new OleDbConnection(@"Provider = Microsoft.ACE.OLEDB.12.0; Data Source = D:\Курс 2 Семестр 1\БД\VideoRental\VideoRental\VideoRental.accdb");
+            this.Connection = new OleDbConnection(String.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0}VideoRental.accdb", AppDomain.CurrentDomain.BaseDirectory));
         }
 
         private void FormFilms_Load(object sender, EventArgs e)
@@ -84,6 +84,14 @@ namespace VideoRental.Forms
                     //    this.Producers = OledbTools.GetProducerValues(command);
                     //if (updates[2])
                     //    this.Cartridges = OledbTools.GetCartridgeValues(command);
+
+                    FindFilm();
+                    FindProducer();
+                    FindCartridge();
+
+                    dataGridViewFilms.Columns[0].Visible = false;
+                    dataGridViewProducers.Columns[0].Visible = false;
+                    dataGridViewCartridges.Columns[0].Visible = false;
                 }
                 catch (Exception ex)
                 {
@@ -95,14 +103,6 @@ namespace VideoRental.Forms
                     this.Connection.Close();
                 }
             }
-
-            FindFilm();
-            FindProducer();
-            FindCartridge();
-
-            dataGridViewFilms.Columns[0].Visible = false;
-            dataGridViewProducers.Columns[0].Visible = false;
-            dataGridViewCartridges.Columns[0].Visible = false;
         }
 
         private void textBoxFilmFind_Enter(object sender, EventArgs e)

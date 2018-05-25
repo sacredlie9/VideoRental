@@ -54,12 +54,12 @@ namespace VideoRental.Forms
 
         private void buttonFilms_Click(object sender, EventArgs e)
         {
-            //FormFilms formFilms = new FormFilms(this.isAdmin);
-            //formFilms.Owner = this;
+            FormFilms formFilms = new FormFilms(this.isAdmin);
+            formFilms.Owner = this;
 
-            //formFilms.ShowDialog();
-            //this.Show();
-            //formFilms.Dispose();
+            formFilms.ShowDialog();
+            this.Show();
+            formFilms.Dispose();
         }
 
         private void buttonClients_Click(object sender, EventArgs e)
