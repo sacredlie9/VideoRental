@@ -64,13 +64,13 @@ namespace VideoRental
             }
         }
 
-        public static string GetCommandForValueProducers
+        public static string CommandForValueProducers
         {
             get
             {
                 return "SELECT " +
                     "Producer.ID, " +
-                    "Producer.Firstname + \" \" + Producer.Lastname AS Name, " +
+                    "Producer.Firstname + \" \" + Producer.Lastname AS Producer, " +
                     "Producer.Birthday, " +
                     "Producer.Country, " +
                     "Producer.Description " +
@@ -78,7 +78,7 @@ namespace VideoRental
             }
         }
 
-        public static string GetCommandForValueCartridges
+        public static string CommandForValueCartridges
         {
             get
             {
