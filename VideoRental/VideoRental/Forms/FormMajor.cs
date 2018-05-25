@@ -16,11 +16,11 @@ namespace VideoRental.Forms
 {
     public partial class FormMajor : Form
     {
-        private bool editMode;
+        private bool isAdmin;
 
         public FormMajor()
         {
-            this.editMode = false;
+            this.isAdmin = false;
 
             InitializeComponent();
 
@@ -45,7 +45,7 @@ namespace VideoRental.Forms
             else if (e.KeyCode == Keys.Home)
             {
                 Locked();
-                this.editMode = false;
+                this.isAdmin = false;
 
                 textBoxPassword.RemoveHintForPassword();
                 textBoxPassword.Focus();
@@ -54,7 +54,7 @@ namespace VideoRental.Forms
 
         private void buttonFilms_Click(object sender, EventArgs e)
         {
-            //FormFilms formFilms = new FormFilms(this.editMode);
+            //FormFilms formFilms = new FormFilms(this.isAdmin);
             //formFilms.Owner = this;
 
             //formFilms.ShowDialog();
@@ -101,14 +101,14 @@ namespace VideoRental.Forms
         private void buttonHome_Click(object sender, EventArgs e)
         {
             Locked();
-            this.editMode = false;
+            this.isAdmin = false;
             textBoxPassword.RemoveHintForPassword();
             textBoxPassword.Focus();
         }
 
         private void Accept()
         {
-            this.editMode = true;
+            this.isAdmin = true;
             this.buttonClients.Visible = true;
             this.buttonContracts.Visible = true;
             this.buttonHome.BackgroundImage = Image.FromFile("Images/exit.png");
@@ -116,7 +116,7 @@ namespace VideoRental.Forms
 
         private void Reject()
         {
-            this.editMode = false;
+            this.isAdmin = false;
             this.buttonClients.Visible = false;
             this.buttonContracts.Visible = false;
             this.buttonHome.BackgroundImage = Image.FromFile("Images/login.png");
