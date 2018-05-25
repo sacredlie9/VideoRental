@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
+using VideoRental.Tools;
 
 
 namespace VideoRental.Forms
@@ -24,7 +25,7 @@ namespace VideoRental.Forms
             InitializeComponent();
 
             Locked();
-            //FormTools.InstallHintForPassword(textBoxPassword, "Пароль");
+            textBoxPassword.InstallHintForPassword("Пароль");
         }
 
         private void FormMajor_FormClosing(object sender, FormClosingEventArgs e)
@@ -45,7 +46,8 @@ namespace VideoRental.Forms
             {
                 Locked();
                 this.editMode = false;
-                //FormTools.RemoveHintForPassword(textBoxPassword);
+
+                textBoxPassword.RemoveHintForPassword();
                 textBoxPassword.Focus();
             }
         }
@@ -100,7 +102,7 @@ namespace VideoRental.Forms
         {
             Locked();
             this.editMode = false;
-            //FormTools.RemoveHintForPassword(textBoxPassword);
+            textBoxPassword.RemoveHintForPassword();
             textBoxPassword.Focus();
         }
 
@@ -158,14 +160,14 @@ namespace VideoRental.Forms
 
         private void textBoxPassword_Leave(object sender, EventArgs e)
         {
-            //if (textBoxPassword.Text == "")
-            //    FormTools.InstallHintForPassword(textBoxPassword, "Пароль");
+            if (textBoxPassword.Text == "")
+                textBoxPassword.InstallHintForPassword("Пароль");
         }
 
         private void textBoxPassword_Enter(object sender, EventArgs e)
         {
-            //if (textBoxPassword.Text == "Пароль")
-            //    FormTools.RemoveHintForPassword(textBoxPassword);
+            if (textBoxPassword.Text == "Пароль")
+                textBoxPassword.RemoveHintForPassword();
             labelError.Visible = false;
         }
 
