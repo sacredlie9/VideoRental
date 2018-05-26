@@ -107,5 +107,60 @@ namespace VideoRental
                     "ON Client.ID = ClientInfo.ID";
             }
         }
+
+        public static string CommandForActiveClients
+        {
+            get
+            {
+                return "SELECT " +
+                    "Client.ID, " +
+                    "Client.Firstname + \" \" + Client.Lastname AS Fullname, " +
+                    "ClientInfo.Phone, " +
+                    "ClientInfo.Email, " +
+                    "ClientInfo.Address, " +
+                    "ClientInfo.City " +
+                    "FROM Client INNER JOIN ClientInfo " +
+                    "ON Client.ID = ClientInfo.ID " +
+                    "WHERE Client.ID IN (SELECT DISTINCT Contract.Client FROM Contract) " +
+                    "GROUP BY Client.ID, Client.Firstname + \" \" + Client.Lastname, ClientInfo.Phone, ClientInfo.Email, ClientInfo.Address, ClientInfo.City";
+            }
+        }
+
+        public static string CommandForInactiveClients
+        {
+            get
+            {
+                return "SELECT " +
+                    "Client.ID, " +
+                    "Client.Firstname + \" \" + Client.Lastname AS Fullname, " +
+                    "ClientInfo.Phone, " +
+                    "ClientInfo.Email, " +
+                    "ClientInfo.Address, " +
+                    "ClientInfo.City " +
+                    "FROM Client INNER JOIN ClientInfo " +
+                    "ON Client.ID = ClientInfo.ID " +
+                    "WHERE Client.ID NOT IN (SELECT DISTINCT Contract.Client FROM Contract) " +
+                    "GROUP BY Client.ID, Client.Firstname + \" \" + Client.Lastname, ClientInfo.Phone, ClientInfo.Email, ClientInfo.Address, ClientInfo.City";
+            }
+        }
+
+        public static string CommandForDebtorsClients
+        {
+            get
+            {
+                return "SELECT " +
+                    "Client.ID, " +
+                    "Client.Firstname + \" \" + Client.Lastname AS Fullname, " +
+                    "ClientInfo.Phone, " +
+                    "ClientInfo.Email, " +
+                    "ClientInfo.Address, " +
+                    "ClientInfo.City " +
+                    "FROM (Client INNER JOIN ClientInfo ON Client.ID = ClientInfo.ID) " +
+                    "INNER JOIN Contract ON Client.ID = Contract.Client " +
+                    "WHERE Client.ID IN (SELECT DISTINCT Contract.Client FROM Contract) " +
+                    "AND Contract.[Date of returning actual] IS NULL " +
+                    "GROUP BY Client.ID, Client.Firstname + \" \" + Client.Lastname, ClientInfo.Phone, ClientInfo.Email, ClientInfo.Address, ClientInfo.City";
+            }
+        }
     }
 }

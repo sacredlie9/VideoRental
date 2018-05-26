@@ -109,6 +109,7 @@ namespace VideoRental.Tools
             return dataTable;
         }
 
+
         public static DataTable GetSearchFilms(this DataTable dataTable, string str, string column)
         {
             DataTable dataTableTemp = CreateTableForValueFilms();
@@ -177,5 +178,16 @@ namespace VideoRental.Tools
             return dataTableTemp;
         }
 
+        public static bool DeleteClient(OleDbCommand command, int clientId)
+        {
+            command.CommandText = String.Format("DELETE FROM Client WHERE Client.ID = {0}", clientId);
+            int temp1 = command.ExecuteNonQuery();
+
+            command.CommandText = String.Format("DELETE FROM ClientInfo WHERE ClientInfo.ID = {0}", clientId);
+
+            int temp2 = command.ExecuteNonQuery();
+
+            return (temp1 != 0) && (temp2 != 0) ? true : false;
+        }
     }
 }

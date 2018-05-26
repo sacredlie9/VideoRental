@@ -92,10 +92,10 @@ namespace VideoRental.Forms
                     if (this.Connection.State == ConnectionState.Closed)
                         this.Connection.Open();
 
-                    //OleDbCommand command = this.Connection.CreateCommand();
-                    //command.CommandText = SqlCommands.CommandForValueFilms;
+                    OleDbCommand command = this.Connection.CreateCommand();
+                    command.CommandText = SqlCommands.CommandForValueClients;
 
-                    //this.Clients = OledbTools.CreateTableForValueClient().FillTable(command)
+                    this.Clients = OledbTools.CreateTableForValueClient().FillTable(command);
                 }
                 catch (Exception ex)
                 {
@@ -231,14 +231,18 @@ namespace VideoRental.Forms
 
         private void buttonClientActive_Click(object sender, EventArgs e)
         {
-            OleDbCommand command = this.Connection.CreateCommand();
-
             try
             {
-                //this.Connection.Open();
-                //DataTable result = OledbTools.GetActiveClients(command);
-                //dataGridViewClients.DataSource = result;
-                //buttonClientClear.Visible = true;
+                OleDbCommand command = this.Connection.CreateCommand();
+                command.CommandText = SqlCommands.CommandForActiveClients;
+
+                if (this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
+
+                DataTable result = OledbTools.CreateTableForValueClient().FillTable(command);
+
+                dataGridViewClients.DataSource = result;
+                buttonClientClear.Visible = true;
             }
             catch (Exception ex)
             {
@@ -252,14 +256,18 @@ namespace VideoRental.Forms
 
         private void buttonClientInactive_Click(object sender, EventArgs e)
         {
-            OleDbCommand command = this.Connection.CreateCommand();
-
             try
             {
-                //this.Connection.Open();
-                //DataTable result = OledbTools.GetInactiveClients(command);
-                //dataGridViewClients.DataSource = result;
-                //buttonClientClear.Visible = true;
+                OleDbCommand command = this.Connection.CreateCommand();
+                command.CommandText = SqlCommands.CommandForInactiveClients;
+
+                if (this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
+
+                DataTable result = OledbTools.CreateTableForValueClient().FillTable(command);
+
+                dataGridViewClients.DataSource = result;
+                buttonClientClear.Visible = true;
             }
             catch (Exception ex)
             {
@@ -273,14 +281,18 @@ namespace VideoRental.Forms
 
         private void buttonClientDebtors_Click(object sender, EventArgs e)
         {
-            OleDbCommand command = this.Connection.CreateCommand();
-
             try
             {
-                //this.Connection.Open();
-                //DataTable result = OledbTools.GetDebtorsClients(command);
-                //dataGridViewClients.DataSource = result;
-                //buttonClientClear.Visible = true;
+                OleDbCommand command = this.Connection.CreateCommand();
+                command.CommandText = SqlCommands.CommandForDebtorsClients;
+
+                if (this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
+
+                DataTable result = OledbTools.CreateTableForValueClient().FillTable(command);
+
+                dataGridViewClients.DataSource = result;
+                buttonClientClear.Visible = true;
             }
             catch (Exception ex)
             {
@@ -342,14 +354,14 @@ namespace VideoRental.Forms
 
             if (result == DialogResult.Yes)
             {
-                this.Connection.Open();
+                if(this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
                 OleDbTransaction transaction = this.Connection.BeginTransaction();
-
                 try
                 {
                     OleDbCommand command = this.Connection.CreateCommand();
                     command.Transaction = transaction;
-                    //OledbTools.DeleteClient(command, clientId);
+                    OledbTools.DeleteClient(command, clientId);
                 }
                 catch (Exception ex)
                 {
