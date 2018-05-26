@@ -34,7 +34,7 @@ namespace VideoRental.Forms
 
         private void FormFilms_Load(object sender, EventArgs e)
         {
-            this.Owner.Hide();
+            this.Owner?.Hide();
 
             if (isAdmin)
             {
