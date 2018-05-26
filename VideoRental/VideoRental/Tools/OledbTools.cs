@@ -82,6 +82,23 @@ namespace VideoRental.Tools
             return dataTable;
         }
 
+        public static DataTable CreateTableForValueClient()
+        {
+            DataTable dataTable = CreateTable("ID", "Fullname", "Phone", "Email", "Address", "City");
+            dataTable.TableName = "Clients";
+
+            dataTable.Columns["ID"].Unique = true;
+            dataTable.Columns["ID"].DataType = typeof(Int32);
+            dataTable.Columns["Fullname"].DataType = typeof(string);
+            dataTable.Columns["Phone"].DataType = typeof(string);
+            dataTable.Columns["Email"].DataType = typeof(string);
+            dataTable.Columns["Address"].DataType = typeof(string);
+            dataTable.Columns["City"].DataType = typeof(string);
+
+            return dataTable;
+        }
+
+
         public static DataTable FillTable(this DataTable dataTable, OleDbCommand command)
         {
             OleDbDataAdapter adapter = new OleDbDataAdapter();
@@ -147,5 +164,18 @@ namespace VideoRental.Tools
 
             return dataTableTemp;
         }
+
+        public static DataTable GetSearchClients(this DataTable dataTable, string str, string column)
+        {
+            DataTable dataTableTemp = CreateTableForValueFilms();
+
+            IEnumerable<DataRow> rows = from client in dataTable.AsEnumerable().Where(row => row.Field<string>(column).ToString().Contains(str)) select client;
+
+            foreach (DataRow row in rows)
+                dataTableTemp.Rows.Add(row.ItemArray);
+
+            return dataTableTemp;
+        }
+
     }
 }

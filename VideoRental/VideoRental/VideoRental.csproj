@@ -45,6 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\FormClients.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormClients.Designer.cs">
+      <DependentUpon>FormClients.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormFilms.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,6 +68,9 @@
     <Compile Include="Tools\FormTools.cs" />
     <Compile Include="Tools\OledbTools.cs" />
     <Compile Include="Tools\SqlCommands.cs" />
+    <EmbeddedResource Include="Forms\FormClients.resx">
+      <DependentUpon>FormClients.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormFilms.resx">
       <DependentUpon>FormFilms.cs</DependentUpon>
     </EmbeddedResource>

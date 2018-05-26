@@ -91,5 +91,21 @@ namespace VideoRental
                     "FROM Cartridge INNER JOIN Film ON Cartridge.Film = Film.ID";
             }
         }
+
+        public static string CommandForValueClients
+        {
+            get
+            {
+                return "SELECT " +
+                    "Client.ID, " +
+                    "Client.Firstname + \" \" + Client.Lastname AS Fullname, " +
+                    "ClientInfo.Phone, " +
+                    "ClientInfo.Email, " +
+                    "ClientInfo.Address, " +
+                    "ClientInfo.City " +
+                    "FROM Client INNER JOIN ClientInfo " +
+                    "ON Client.ID = ClientInfo.ID";
+            }
+        }
     }
 }
