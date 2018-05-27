@@ -210,7 +210,6 @@
             this.buttonFilmClear.Text = "Очистить";
             this.buttonFilmClear.UseMnemonic = false;
             this.buttonFilmClear.UseVisualStyleBackColor = false;
-            this.buttonFilmClear.Visible = false;
             this.buttonFilmClear.Click += new System.EventHandler(this.buttonFilmClear_Click);
             // 
             // buttonFilmPopular
@@ -385,7 +384,6 @@
             this.buttonProducerClear.Text = "Очистить";
             this.buttonProducerClear.UseMnemonic = false;
             this.buttonProducerClear.UseVisualStyleBackColor = false;
-            this.buttonProducerClear.Visible = false;
             this.buttonProducerClear.Click += new System.EventHandler(this.buttonProducerClear_Click);
             // 
             // textBoxProducerCountry
@@ -569,7 +567,6 @@
             this.buttonCartridgeClear.Text = "Очистить";
             this.buttonCartridgeClear.UseMnemonic = false;
             this.buttonCartridgeClear.UseVisualStyleBackColor = false;
-            this.buttonCartridgeClear.Visible = false;
             this.buttonCartridgeClear.Click += new System.EventHandler(this.buttonСartridgeClear_Click);
             // 
             // textBoxCartridgePriceBefore

@@ -145,59 +145,35 @@ namespace VideoRental.Forms
 
         private void InstallFilms(IDictionary<string, string> searcher)
         {
-            bool change = false;
-            DataTable dataTableResult = this.Films;
+            DataTable dataTableResult = (DataTable)dataGridViewFilms.DataSource ?? this.Films;
 
             foreach (var item in searcher)
-            {
-                change = true;
                 dataTableResult = dataTableResult.GetSearchFilms(item.Value, item.Key);
-            }
-
-            if (change)
-                buttonFilmClear.Visible = true;
-            else
-                buttonFilmClear.Visible = false;
 
             dataGridViewFilms.DataSource = dataTableResult;
         }
 
         private void InstallProducers(IDictionary<string, string> searcher)
         {
-            bool change = false;
-            DataTable dataTableResult = this.Producers;
+            DataTable dataTableResult = (DataTable)dataGridViewProducers.DataSource ?? this.Producers;
 
             foreach (var item in searcher)
-            {
-                change = true;
                 dataTableResult = dataTableResult.GetSearchProducers(item.Value, item.Key);
-            }
-
-            if (change)
-                buttonProducerClear.Visible = true;
-            else
-                buttonProducerClear.Visible = false;
 
             dataGridViewProducers.DataSource = dataTableResult;
         }
 
         private void InstallCartridges()
         {
-            bool change = false;
             bool emptyPriceFrom = textBoxCartridgePriceFrom.IsEmpty("Стоимость от");
             bool emptyPriceBefore = textBoxCartridgePriceBefore.IsEmpty("Стоимость до");
 
-            DataTable dataTableResult = this.Cartridges;
+            DataTable dataTableResult = (DataTable)dataGridViewCartridges.DataSource ?? this.Cartridges;
 
             if (!textBoxСartridgeFilm.IsEmpty("Фильм"))
-            {
-                change = true;
                 dataTableResult = dataTableResult.GetSearchCartridges(textBoxСartridgeFilm.Text);
-            }
             if (!emptyPriceFrom || !emptyPriceBefore)
             {
-                change = true;
-
                 if (!emptyPriceFrom && !emptyPriceBefore)
                     dataTableResult = dataTableResult.GetSearchCartridges(Decimal.Parse(textBoxCartridgePriceFrom.Text), Decimal.Parse(textBoxCartridgePriceBefore.Text));
                 else if (!emptyPriceFrom)
@@ -205,10 +181,6 @@ namespace VideoRental.Forms
                 else
                     dataTableResult = dataTableResult.GetSearchCartridges(new decimal(0), Decimal.Parse(textBoxCartridgePriceBefore.Text));
             }
-            if (change)
-                buttonCartridgeClear.Visible = true;
-            else
-                buttonCartridgeClear.Visible = false;
 
             dataGridViewCartridges.DataSource = dataTableResult;
         }
@@ -500,10 +472,15 @@ namespace VideoRental.Forms
 
             try
             {
-                //this.Connection.Open();
-                //DataTable result = OledbTools.GetPopularFilm(command);
-                //dataGridViewFilms.DataSource = result;
-                //buttonFilmClear.Visible = true;
+                if(this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
+
+                command.CommandText = SqlCommands.CommandForPopularFilms;
+
+
+                DataTable result = OledbTools.CreateTableForValueFilms().FillTable(command);
+                dataGridViewFilms.DataSource = result;
+                buttonFilmClear.Visible = true;
             }
             catch (Exception ex)
             {
@@ -522,10 +499,16 @@ namespace VideoRental.Forms
 
             try
             {
-                //this.Connection.Open();
-                //DataTable result = OledbTools.GetNewFilm(command);
-                //dataGridViewFilms.DataSource = result;
-                //buttonFilmClear.Visible = true;
+                if (this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
+
+                command.CommandText = SqlCommands.CommandForNewFilms;
+                command.Parameters.Add("@YearNow", OleDbType.Integer);
+                command.Parameters["@YearNow"].Value = DateTime.Now.Year;
+
+                DataTable result = OledbTools.CreateTableForValueFilms().FillTable(command);
+                dataGridViewFilms.DataSource = result;
+                buttonFilmClear.Visible = true;
             }
             catch (Exception ex)
             {
@@ -544,10 +527,15 @@ namespace VideoRental.Forms
 
             try
             {
-                //this.Connection.Open();
-                //DataTable result = OledbTools.GetMinCartridge(command);
-                //dataGridViewCartridges.DataSource = result;
-                //buttonCartridgeClear.Visible = true;
+                if (this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
+
+                command.CommandText = SqlCommands.CommandForMinCartridges;
+
+
+                DataTable result = OledbTools.CreateTableForCartridges().FillTable(command);
+                dataGridViewCartridges.DataSource = result;
+                buttonCartridgeClear.Visible = true;
             }
             catch (Exception ex)
             {
@@ -566,10 +554,15 @@ namespace VideoRental.Forms
 
             try
             {
-                //this.Connection.Open();
-                //DataTable result = OledbTools.GetMaxCartridge(command);
-                //dataGridViewCartridges.DataSource = result;
-                //buttonCartridgeClear.Visible = true;
+                if (this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
+
+                command.CommandText = SqlCommands.CommandForMaxCartridges;
+
+
+                DataTable result = OledbTools.CreateTableForCartridges().FillTable(command);
+                dataGridViewCartridges.DataSource = result;
+                buttonCartridgeClear.Visible = true;
             }
             catch (Exception ex)
             {

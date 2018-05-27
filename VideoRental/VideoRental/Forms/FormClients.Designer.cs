@@ -266,7 +266,6 @@
             this.buttonClientClear.Text = "Очистить";
             this.buttonClientClear.UseMnemonic = false;
             this.buttonClientClear.UseVisualStyleBackColor = false;
-            this.buttonClientClear.Visible = false;
             this.buttonClientClear.Click += new System.EventHandler(this.buttonClientClear_Click);
             // 
             // buttonClientActive

@@ -141,6 +141,7 @@ namespace VideoRental.Tools
             return dataTableTemp;
         }
 
+
         public static DataTable GetSearchProducers(this DataTable dataTable, string str, string column)
         {
             DataTable result = CreateTableForProducers();
@@ -157,6 +158,7 @@ namespace VideoRental.Tools
 
             return result;
         }
+
 
         public static DataTable GetSearchCartridges(this DataTable dataTable, string str)
         {
@@ -185,6 +187,7 @@ namespace VideoRental.Tools
             return dataTableTemp;
         }
 
+
         public static DataTable GetSearchClients(this DataTable dataTable, string str, string column)
         {
             DataTable dataTableTemp = CreateTableForValueFilms();
@@ -196,6 +199,7 @@ namespace VideoRental.Tools
 
             return dataTableTemp;
         }
+
 
         public static bool DeleteClient(OleDbCommand command, int clientId)
         {

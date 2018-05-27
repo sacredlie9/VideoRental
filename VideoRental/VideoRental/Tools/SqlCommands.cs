@@ -46,9 +46,9 @@ namespace VideoRental
                 return "SELECT DISTINCT " +
                     "Film.ID, " +
                     "Film.Title, " +
-                    "Producer.Firstname + \" \" + Producer.Lastname AS Name, " +
+                    "Producer.Firstname + \" \" + Producer.Lastname AS Producer, " +
                     "Film.Genre, " +
-                    "Film.Birthday, " +
+                    "Film.Premiere, " +
                     "Film.Description " +
                     "FROM ((Producer INNER JOIN Film ON Producer.ID = Film.Producer) " +
                     "INNER JOIN Cartridge ON Film.ID = Cartridge.Film) " +
@@ -60,9 +60,10 @@ namespace VideoRental
         {
             get
             {
-                return CommandForValueFilms + " WHERE Film.Birthday = @YearNow";
+                return CommandForValueFilms + " WHERE Film.Premiere = @YearNow";
             }
         }
+
 
         public static string CommandForValueProducers
         {
@@ -78,6 +79,7 @@ namespace VideoRental
             }
         }
 
+
         public static string CommandForValueCartridges
         {
             get
@@ -91,6 +93,37 @@ namespace VideoRental
                     "FROM Cartridge INNER JOIN Film ON Cartridge.Film = Film.ID";
             }
         }
+
+        public static string CommandForMaxCartridges
+        {
+            get
+            {
+                return "SELECT " +
+                    "Cartridge.ID, " +
+                    "Film.Title, " +
+                    "Cartridge.[Cost per day], " +
+                    "Cartridge.[Cost collateral], " +
+                    "Cartridge.Description " +
+                    "FROM Film INNER JOIN Cartridge ON Film.ID = Cartridge.Film " +
+                    "WHERE Cartridge.[Cost per day] = (SELECT MAX(Cartridge.[Cost per day]) FROM Cartridge)";
+            }
+        }
+
+        public static string CommandForMinCartridges
+        {
+            get
+            {
+                return "SELECT " +
+                    "Cartridge.ID, " +
+                    "Film.Title, " +
+                    "Cartridge.[Cost per day], " +
+                    "Cartridge.[Cost collateral], " +
+                    "Cartridge.Description " +
+                    "FROM Film INNER JOIN Cartridge ON Film.ID = Cartridge.Film " +
+                    "WHERE Cartridge.[Cost per day] = (SELECT MIN(Cartridge.[Cost per day]) FROM Cartridge)";
+            }
+        }
+
 
         public static string CommandForValueClients
         {
