@@ -441,10 +441,57 @@ namespace VideoRental.Forms
         }
 
 
+        private void buttonEdit_Click(object sender, EventArgs e)
+        {
+            //FormFilmsEdit formFilmsEdit = new FormFilmsEdit(this.Connection, tabControlFilms.SelectedIndex);
+            //formFilmsEdit.Owner = this;
+
+            //formFilmsEdit.ShowDialog();
+            //bool[] changes = formFilmsEdit.GetDataChanges();
+            //this.Show();
+            //formFilmsEdit.Dispose();
+            //this.InstallDataGridValues(changes);
+        }
+
         private void buttonBack_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.DefaultExt = "pdf";
+            saveFileDialog.Filter = "Файл PDF (*.pdf)|*.pdf|Все файлы (*.*)|*.*";
+            saveFileDialog.RestoreDirectory = true;
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string path = saveFileDialog.FileName;
+                try
+                {
+                    switch (tabControlFilms.SelectedIndex)
+                    {
+                        case 0:
+                            ((DataTable)dataGridViewFilms.DataSource).Save(path, "Список фильмов");
+                            break;
+                        case 1:
+                            ((DataTable)dataGridViewProducers.DataSource).Save(path, "Список режиссеров");
+                            break;
+                        case 2:
+                            ((DataTable)dataGridViewCartridges.DataSource).Save(path, "Список кассет");
+                            break;
+                    }
+
+                    MessageBox.Show("Файл сохренен");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
 
         private void buttonFilmPopular_Click(object sender, EventArgs e)
         {
@@ -683,24 +730,26 @@ namespace VideoRental.Forms
                 DataGridViewRow row;
                 try
                 {
-                    //switch (tabControlFilms.SelectedIndex)
-                    //{
-                    //    case 0:
-                    //        row = dataGridViewFilms.SelectedRows[0];
-                    //        Stream.SaveFilm(path, row.Cells[1].Value.ToString(), row.Cells[3].Value.ToString(), Int32.Parse(row.Cells[4].Value.ToString()), row.Cells[5].Value.ToString(), row.Cells[2].Value.ToString());
-                    //        break;
-                    //    case 1:
-                    //        row = dataGridViewProducers.SelectedRows[0];
-                    //        DataTable films = OledbTools.GetFilmsByProducer(OledbTools.GetFilms(this.Connection.CreateCommand()), (int)row.Cells[0].Value);
-                    //        string[] temp = row.Cells[1].Value.ToString().Split(' ');
-                    //        Stream.SaveProducer(path, temp[0], temp[1], (DateTime)row.Cells[2].Value, row.Cells[3].Value.ToString(), films, row.Cells[4].Value.ToString());
-                    //        break;
-                    //    case 2:
-                    //        row = dataGridViewCartridges.SelectedRows[0];
-                    //        DataRow film = OledbTools.GetFilm(this.Films, row.Cells[1].Value.ToString());
-                    //        Stream.SaveCartridge(path, film.ItemArray[1].ToString(), film.ItemArray[3].ToString(), (int)film.ItemArray[4], (decimal)row.Cells[2].Value, (decimal)row.Cells[3].Value, row.Cells[4].Value.ToString());
-                    //        break;
-                    //}
+                    switch (tabControlFilms.SelectedIndex)
+                    {
+                        case 0:
+                            row = dataGridViewFilms.SelectedRows[0];
+                            Stream.SaveFilm(path, row.Cells[1].Value.ToString(), row.Cells[3].Value.ToString(), Int32.Parse(row.Cells[4].Value.ToString()), row.Cells[5].Value.ToString(), row.Cells[2].Value.ToString());
+                            break;
+                        case 1:
+                            row = dataGridViewProducers.SelectedRows[0];
+                            DataTable films = this.Films.GetFilmsByProducer(row.Cells[1].Value.ToString());
+                            string[] name = row.Cells[1].Value.ToString().Split(' ');
+
+                            Stream.SaveProducer(path, name[0], name[1], (DateTime)row.Cells[2].Value, row.Cells[3].Value.ToString(), films, row.Cells[4].Value.ToString());
+                            break;
+                        case 2:
+                            row = dataGridViewCartridges.SelectedRows[0];
+                            DataRow film = this.Films.GetFilm(row.Cells[1].Value.ToString());
+
+                            Stream.SaveCartridge(path, film.ItemArray[1].ToString(), film.ItemArray[3].ToString(), (int)film.ItemArray[4], (decimal)row.Cells[2].Value, (decimal)row.Cells[3].Value, row.Cells[4].Value.ToString());
+                            break;
+                    }
                     MessageBox.Show("Файл сохранен");
                 }
                 catch (Exception ex)

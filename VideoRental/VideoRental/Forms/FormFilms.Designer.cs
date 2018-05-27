@@ -678,6 +678,7 @@
             this.buttonSave.Text = "Сохранить";
             this.buttonSave.UseMnemonic = false;
             this.buttonSave.UseVisualStyleBackColor = false;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // buttonEdit
             // 
@@ -697,6 +698,7 @@
             this.buttonEdit.Text = "Редактировать";
             this.buttonEdit.UseMnemonic = false;
             this.buttonEdit.UseVisualStyleBackColor = false;
+            this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
             // buttonBack
             // 

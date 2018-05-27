@@ -110,6 +110,25 @@ namespace VideoRental.Tools
         }
 
 
+        public static DataTable GetFilmsByProducer(this DataTable tableFilms, string producerName)
+        {
+            DataTable dataTable = CreateTableForValueFilms();
+
+            IEnumerable<DataRow> rows = from row in tableFilms.AsEnumerable() where row["Producer"].ToString() == producerName select row;
+
+            foreach (DataRow row in rows)
+                dataTable.Rows.Add(row.ItemArray);
+
+            return dataTable;
+        }
+
+        public static DataRow GetFilm(this DataTable table, string film)
+        {
+            IEnumerable<DataRow> rows = from row in table.AsEnumerable() where row["Title"].ToString() == film select row;
+
+            return rows?.First() ?? null;
+        }
+
         public static DataTable GetSearchFilms(this DataTable dataTable, string str, string column)
         {
             DataTable dataTableTemp = CreateTableForValueFilms();

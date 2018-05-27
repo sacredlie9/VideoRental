@@ -48,6 +48,7 @@ namespace VideoRental.Tools
 
             PdfPCell cell = new PdfPCell();
             cell.BackgroundColor = BaseColor.LIGHT_GRAY;
+            cell.HorizontalAlignment = 1;
 
             foreach (DataColumn column in dataTable.Columns)
             {
@@ -72,7 +73,7 @@ namespace VideoRental.Tools
             table.AddCell(cellFooter);
             table.AddCell(emptyCell);
 
-            cellFooter.Phrase = new Phrase("\"Прокат видеофильмов\"\t\t\t\tПодпись______________", font);
+            cellFooter.Phrase = new Phrase("\"Прокат видеофильмов\"                      Подпись______________", font);
             cellFooter.HorizontalAlignment = 3;
 
             table.AddCell(cellFooter);
@@ -210,6 +211,7 @@ namespace VideoRental.Tools
 
             cellTitle.Border = cellGenre.Border = cellInfo.Border = 1;
             cellTitle.BackgroundColor = cellGenre.BackgroundColor = cellInfo.BackgroundColor = BaseColor.LIGHT_GRAY;
+            cellTitle.HorizontalAlignment = cellGenre.HorizontalAlignment = cellInfo.HorizontalAlignment = 1;
             cellInfo.Colspan = 2;
 
             cellTitle.Phrase = new Phrase("Название", font);
