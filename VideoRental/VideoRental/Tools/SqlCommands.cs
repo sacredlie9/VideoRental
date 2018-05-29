@@ -23,7 +23,7 @@ namespace VideoRental
                     "FROM Film";
             }
         }
-    
+
         public static string CommandForValueFilms
         {
             get
@@ -194,6 +194,56 @@ namespace VideoRental
                     "AND Contract.[Date of returning actual] IS NULL " +
                     "GROUP BY Client.ID, Client.Firstname + \" \" + Client.Lastname, ClientInfo.Phone, ClientInfo.Email, ClientInfo.Address, ClientInfo.City";
             }
+        }
+
+
+        public static string CommandForValueContracts
+        {
+            get
+            {
+                return "SELECT " +
+                    "Contract.ID, " +
+                    "Client.Firstname + \" \" + Client.Lastname AS Client, " +
+                    "Film.Title AS Cartridge, " +
+                    "Contract.[Date of receiving], " +
+                    "Contract.[Date of returning], " +
+                    "Contract.[Date of returning actual], " +
+                    "Contract.Pledge, " +
+                    "Contract.Payment " +
+                    "FROM (Film INNER JOIN Cartridge ON Film.ID = Cartridge.Film) " +
+                    "INNER JOIN (Client INNER JOIN Contract ON Client.ID = Contract.Client) " +
+                    "ON Cartridge.ID = Contract.Cartridge";
+            }
+        }
+
+        public static string ActiveContracts
+        {
+            get
+            {
+                return CommandForValueContracts + " WHERE Contract.[Date of returning actual] IS NULL OR Contract.[Date of returning actual] = ' '";
+            }
+        }
+
+        public static string InactiveContracts
+        {
+            get
+            {
+                return CommandForValueContracts + " WHERE Contract.[Date of returning actual] IS NOT NULL OR Contract.[Date of returning actual] <> ' '";
+            }
+        }
+
+        public static string NotReturnedContracts
+        {
+            get
+            {
+                return CommandForValueContracts + "WHERE Contract.[Date of returning actual] IS NULL AND (Contract.[Date of returning] <= @DateTime)";
+            }
+        }
+
+
+        public static string DeleteContractById(int id)
+        {
+            return String.Format("DELETE FROM Contract WHERE Contract.ID = {0}", id);
         }
     }
 }

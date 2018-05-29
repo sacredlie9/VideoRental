@@ -70,7 +70,7 @@ namespace VideoRental.Tools
         public static DataTable CreateTableForCartridges()
         {
             DataTable dataTable = CreateTable("ID", "Title", "Cost per day", "Cost collateral", "Description");
-            dataTable.TableName = "Producers";
+            dataTable.TableName = "Cartridges";
 
             dataTable.Columns["ID"].Unique = true;
             dataTable.Columns["ID"].DataType = typeof(Int32);
@@ -94,6 +94,24 @@ namespace VideoRental.Tools
             dataTable.Columns["Email"].DataType = typeof(string);
             dataTable.Columns["Address"].DataType = typeof(string);
             dataTable.Columns["City"].DataType = typeof(string);
+
+            return dataTable;
+        }
+
+        public static DataTable CreateTableForValueContracts()
+        {
+            DataTable dataTable = CreateTable("ID", "Client", "Cartridge", "Date of receiving", "Date of returning", "Date of returning actual", "Pledge", "Payment");
+            dataTable.TableName = "Contracts";
+
+            dataTable.Columns["ID"].Unique = true;
+            dataTable.Columns["ID"].DataType = typeof(Int32);
+            dataTable.Columns["Client"].DataType = typeof(string);
+            dataTable.Columns["Cartridge"].DataType = typeof(string);
+            dataTable.Columns["Date of receiving"].DataType = typeof(DateTime);
+            dataTable.Columns["Date of returning"].DataType = typeof(DateTime);
+            dataTable.Columns["Date of returning actual"].DataType = typeof(string);
+            dataTable.Columns["Pledge"].DataType = typeof(bool);
+            dataTable.Columns["Payment"].DataType = typeof(bool);
 
             return dataTable;
         }
@@ -129,6 +147,7 @@ namespace VideoRental.Tools
             return rows?.First() ?? null;
         }
 
+
         public static DataTable GetSearchFilms(this DataTable dataTable, string str, string column)
         {
             DataTable dataTableTemp = CreateTableForValueFilms();
@@ -140,7 +159,6 @@ namespace VideoRental.Tools
 
             return dataTableTemp;
         }
-
 
         public static DataTable GetSearchProducers(this DataTable dataTable, string str, string column)
         {
@@ -158,7 +176,6 @@ namespace VideoRental.Tools
 
             return result;
         }
-
 
         public static DataTable GetSearchCartridges(this DataTable dataTable, string str)
         {
@@ -187,7 +204,6 @@ namespace VideoRental.Tools
             return dataTableTemp;
         }
 
-
         public static DataTable GetSearchClients(this DataTable dataTable, string str, string column)
         {
             DataTable dataTableTemp = CreateTableForValueFilms();
@@ -200,17 +216,35 @@ namespace VideoRental.Tools
             return dataTableTemp;
         }
 
-
-        public static bool DeleteClient(OleDbCommand command, int clientId)
+        public static DataTable GetSearchContracts(this DataTable dataTable, string str, string column)
         {
-            command.CommandText = String.Format("DELETE FROM Client WHERE Client.ID = {0}", clientId);
+            DataTable result = CreateTableForValueContracts();
+
+            IEnumerable<DataRow> rows = from item in dataTable.AsEnumerable().Where(row => row[column].ToString().Contains(str)) select item;
+
+            foreach (DataRow row in rows)
+                result.Rows.Add(row.ItemArray);
+            return result;
+        }
+
+
+        public static bool DeleteClient(OleDbCommand command, int id) //TODO
+        {
+            command.CommandText = String.Format("DELETE FROM Client WHERE Client.ID = {0}", id);
             int temp1 = command.ExecuteNonQuery();
 
-            command.CommandText = String.Format("DELETE FROM ClientInfo WHERE ClientInfo.ID = {0}", clientId);
+            command.CommandText = String.Format("DELETE FROM ClientInfo WHERE ClientInfo.ID = {0}", id);
 
             int temp2 = command.ExecuteNonQuery();
 
             return (temp1 != 0) && (temp2 != 0) ? true : false;
+        }
+
+        public static bool DeleteItemByID(OleDbCommand command)
+        {
+            int temp = command.ExecuteNonQuery();
+
+            return temp != 0 ? true : false;
         }
     }
 }

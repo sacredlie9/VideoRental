@@ -357,11 +357,13 @@ namespace VideoRental.Forms
                 if(this.Connection.State == ConnectionState.Closed)
                     this.Connection.Open();
                 OleDbTransaction transaction = this.Connection.BeginTransaction();
+
                 try
                 {
                     OleDbCommand command = this.Connection.CreateCommand();
                     command.Transaction = transaction;
                     OledbTools.DeleteClient(command, clientId);
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
@@ -370,7 +372,6 @@ namespace VideoRental.Forms
                 }
                 finally
                 {
-                    transaction.Commit();
                     this.Connection.Close();
 
                     this.InstallDataGridValues(true);

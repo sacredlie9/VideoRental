@@ -75,10 +75,10 @@ namespace VideoRental.Forms
 
         private void ChangeDataTable(IDictionary<string, string> searcher)
         {
-            DataTable result = this.Contracts;
+            DataTable result = (DataTable)dgvContracts.DataSource ?? this.Contracts;
 
             foreach (var item in searcher)
-                //result = result.GetSearchContracts(item.Value, item.Key);
+                result = result.GetSearchContracts(item.Value, item.Key);
 
             dgvContracts.DataSource = result;
         }
@@ -91,10 +91,9 @@ namespace VideoRental.Forms
                     this.Connection.Open();
 
                 OleDbCommand command = this.Connection.CreateCommand();
-                //command.CommandText = SqlCommands.CommandForValueContracts;
+                command.CommandText = SqlCommands.CommandForValueContracts;
 
-                return null;
-                //return OledbTools.CreateTableForValueContract().FillTable(command);
+                return OledbTools.CreateTableForValueContracts().FillTable(command);
             }
             catch (Exception ex)
             {
@@ -208,17 +207,17 @@ namespace VideoRental.Forms
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                //string path = saveFileDialog.FileName;
-                //try
-                //{
-                //    Stream.SaveTable((DataTable)dataGridViewContracts.DataSource, path, "Ведомость");
+                string path = dialog.FileName;
+                try
+                {
+                    ((DataTable)dgvContracts.DataSource).Save(path, "Ведомость");
 
-                //    MessageBox.Show("Файл сохренен");
-                //}
-                //catch (Exception ex)
-                //{
-                //    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //}
+                    MessageBox.Show("Файл сохренен");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -226,14 +225,17 @@ namespace VideoRental.Forms
         {
             try
             {
-                OleDbCommand command = this.Connection.CreateCommand();
-
                 if (this.Connection.State == ConnectionState.Closed)
                     this.Connection.Open();
 
-                //DataTable result = OledbTools.GetActiveContracts(command);
-                //dataGridViewContracts.DataSource = result;
-                //buttonContractsClear.Visible = true;
+                OleDbCommand command = this.Connection.CreateCommand();
+                command.CommandText = SqlCommands.ActiveContracts;
+
+
+                DataTable result = OledbTools.CreateTableForValueContracts().FillTable(command);
+                dgvContracts.DataSource = result;
+
+                InstallHints();
             }
             catch (Exception ex)
             {
@@ -249,14 +251,17 @@ namespace VideoRental.Forms
         {
             try
             {
-                OleDbCommand command = this.Connection.CreateCommand();
-
                 if (this.Connection.State == ConnectionState.Closed)
                     this.Connection.Open();
 
-                //DataTable result = OledbTools.GetInactiveContracts(command);
-                //dataGridViewContracts.DataSource = result;
-                //buttonContractsClear.Visible = true;
+                OleDbCommand command = this.Connection.CreateCommand();
+                command.CommandText = SqlCommands.InactiveContracts;
+
+
+                DataTable result = OledbTools.CreateTableForValueContracts().FillTable(command);
+                dgvContracts.DataSource = result;
+
+                InstallHints();
             }
             catch (Exception ex)
             {
@@ -270,16 +275,20 @@ namespace VideoRental.Forms
 
         private void buttonNotReturned_Click(object sender, EventArgs e)
         {
-            OleDbCommand command = this.Connection.CreateCommand();
-
             try
             {
                 if (this.Connection.State == ConnectionState.Closed)
                     this.Connection.Open();
 
-                //DataTable result = OledbTools.GetNotReturnsContracts(command);
-                //dataGridViewContracts.DataSource = result;
-                //buttonContractsClear.Visible = true;
+                OleDbCommand command = this.Connection.CreateCommand();
+                command.CommandText = SqlCommands.NotReturnedContracts;
+                command.Parameters.Add("@DateTime", OleDbType.Date);
+                command.Parameters["@DateTime"].Value = DateTime.Now;
+
+                DataTable result = OledbTools.CreateTableForValueContracts().FillTable(command);
+                dgvContracts.DataSource = result;
+
+                InstallHints();
             }
             catch (Exception ex)
             {
@@ -334,29 +343,31 @@ namespace VideoRental.Forms
 
         private void toolStripMenuItemDelete_Click(object sender, EventArgs e)
         {
-            int contractId = (int)dgvContracts.SelectedRows[0].Cells[0].Value;
+            int id = (int)dgvContracts.SelectedRows[0].Cells[0].Value;
 
-            var result = MessageBox.Show(String.Format("Вы действительно хотите удалить договор с номером {0}?", contractId), "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result = MessageBox.Show(String.Format("Вы действительно хотите удалить договор с номером {0}?", id), "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
-                //try
-                //{
-                    //if (this.Connection.State == ConnectionState.Closed)
-                    //    this.Connection.Open();
+                try
+                {
+                    if (this.Connection.State == ConnectionState.Closed)
+                        this.Connection.Open();
 
-                //    OledbTools.DeleteContract(this.Connection.CreateCommand(), contractId);
-                //}
-                //catch (Exception ex)
-                //{
-                //    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //}
-                //finally
-                //{
-                //    this.Connection.Close();
+                    OleDbCommand command = this.Connection.CreateCommand();
+                    command.CommandText = SqlCommands.DeleteContractById(id);
 
-                //    this.InstallDataGridValues(true);
-                //}
+                    OledbTools.DeleteItemByID(command);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    this.Connection.Close();
+                    RequestTable();                    
+                }
             }
         }
 
@@ -391,19 +402,30 @@ namespace VideoRental.Forms
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                if (this.Connection.State == ConnectionState.Closed)
+                    this.Connection.Open();
+                OleDbTransaction transaction = this.Connection.BeginTransaction();
+
                 try
                 {
-                    if (this.Connection.State == ConnectionState.Closed)
-                        this.Connection.Open();
+                    OleDbCommand command = this.Connection.CreateCommand();
+                    DataGridViewRow row = dgvContracts.SelectedRows[0];
+                    int id = (int)row.Cells[0].Value;
 
-                    //DataGridViewRow row = dataGridViewContracts.SelectedRows[0];
-                    //decimal price = OledbTools.GetPricePerCartridge(this.Connection.CreateCommand(), (int)row.Cells[0].Value);
-                    //decimal collateral = OledbTools.GetPriceCollateral(this.Connection.CreateCommand(), (int)row.Cells[0].Value);
-                    //Stream.SaveCheck(saveFileDialog.FileName, (int)row.Cells[0].Value, row.Cells[1].Value.ToString(), row.Cells[2].Value.ToString(), (DateTime)row.Cells[3].Value, (DateTime)row.Cells[4].Value, price, collateral);
-                    //MessageBox.Show("Файл сохранен");
+                    command.CommandText = String.Format("SELECT Cartridge.[Cost per day] FROM Cartridge INNER JOIN Contract ON Cartridge.ID = Contract.Cartridge WHERE Contract.ID = {0}", id);
+                    decimal price = (decimal)command.ExecuteScalar();
+
+                    command.CommandText = String.Format("SELECT Cartridge.[Cost collateral] FROM Cartridge INNER JOIN Contract ON Cartridge.ID = Contract.Cartridge WHERE Contract.ID = {0}", id);
+                    decimal collateral = (decimal)command.ExecuteScalar();
+
+                    Stream.SaveCheck(dialog.FileName, (int)row.Cells[0].Value, row.Cells[1].Value.ToString(), row.Cells[2].Value.ToString(), (DateTime)row.Cells[3].Value, (DateTime)row.Cells[4].Value, price, collateral);
+
+                    transaction.Commit();
+                    MessageBox.Show("Файл сохранен");
                 }
                 catch (Exception ex)
                 {
+                    transaction.Rollback();
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally

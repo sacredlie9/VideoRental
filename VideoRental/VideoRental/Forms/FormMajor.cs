@@ -74,12 +74,12 @@ namespace VideoRental.Forms
 
         private void buttonContracts_Click(object sender, EventArgs e)
         {
-            FormContracts formContracts = new FormContracts();
-            formContracts.Owner = this;
+            FormContracts contracts = new FormContracts();
+            contracts.Owner = this;
 
-            formContracts.ShowDialog();
+            contracts.ShowDialog();
             this.Show();
-            formContracts.Dispose();
+            contracts.Dispose();
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
