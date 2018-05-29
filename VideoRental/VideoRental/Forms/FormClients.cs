@@ -30,7 +30,7 @@ namespace VideoRental.Forms
 
             InstallDataGridValues(true);
 
-            InstallHintClients();
+            InstallHint();
         }
 
         private void FormClients_FormClosing(object sender, FormClosingEventArgs e)
@@ -111,7 +111,7 @@ namespace VideoRental.Forms
             }
         }
 
-        private void InstallHintClients()
+        private void InstallHint()
         {
             textBoxClientName.InstallHint("Имя");
             textBoxClientPhone.InstallHint("Телефон");
@@ -184,7 +184,7 @@ namespace VideoRental.Forms
 
         private void buttonClientClear_Click(object sender, EventArgs e)
         {
-            InstallHintClients();
+            InstallHint();
             dataGridViewClients.DataSource = this.Clients;
         }
 

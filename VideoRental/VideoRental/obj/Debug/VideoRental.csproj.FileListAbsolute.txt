@@ -12,3 +12,4 @@ D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.Forms.F
 D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.Forms.FormClients.resources
 D:\VideoRental\VideoRental\VideoRental\VideoRental\bin\Debug\itextsharp.dll
 D:\VideoRental\VideoRental\VideoRental\VideoRental\bin\Debug\itextsharp.xml
+D:\VideoRental\VideoRental\VideoRental\VideoRental\obj\Debug\VideoRental.Forms.FormContracts.resources

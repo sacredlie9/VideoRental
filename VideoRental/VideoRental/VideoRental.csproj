@@ -55,6 +55,12 @@
     <Compile Include="Forms\FormClients.Designer.cs">
       <DependentUpon>FormClients.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormContracts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormContracts.Designer.cs">
+      <DependentUpon>FormContracts.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormFilms.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -75,6 +81,9 @@
     <Compile Include="Tools\Stream.cs" />
     <EmbeddedResource Include="Forms\FormClients.resx">
       <DependentUpon>FormClients.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormContracts.resx">
+      <DependentUpon>FormContracts.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormFilms.resx">
       <DependentUpon>FormFilms.cs</DependentUpon>
